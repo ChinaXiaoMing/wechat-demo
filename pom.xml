@@ -39,6 +39,12 @@
       <artifactId>hutool-all</artifactId>
       <version>5.7.5</version>
     </dependency>
+    <!-- excel导出poi -->
+    <dependency>
+      <groupId>org.apache.poi</groupId>
+      <artifactId>poi-ooxml</artifactId>
+      <version>5.0.0</version>
+    </dependency>
 
     <dependency>
       <groupId>mysql</groupId>

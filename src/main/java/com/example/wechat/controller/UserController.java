@@ -1,9 +1,5 @@
 package com.example.wechat.controller;
 
-import cn.hutool.core.util.IdUtil;
-import cn.hutool.http.server.HttpServerResponse;
-import cn.hutool.poi.excel.ExcelUtil;
-import cn.hutool.poi.excel.ExcelWriter;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.wechat.common.Result;
@@ -19,8 +15,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import springfox.documentation.annotations.ApiIgnore;
 
-import java.io.File;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -73,16 +71,12 @@ public class UserController {
 
     @PostMapping("/export")
     @ApiOperation(value = "导出用户信息", notes = "导出用户信息")
-    public Result<String> exportUser(HttpServerResponse response) {
-        File file = new File(System.getProperty("use.dir") + File.pathSeparator + IdUtil.simpleUUID() + "xlsx");
-        ExcelWriter writer = ExcelUtil.getBigWriter(file);
-        writer.write(userService.list(), true);
-        writer.autoSizeColumnAll();
-        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8");
-        response.setHeader("Content-Disposition", "attachment;filename=file.xlsx");
-        file.deleteOnExit();
-        writer.flush(response.getOut(), true);
-        return Result.success();
+    public void exportUser(@ApiIgnore HttpServletResponse response) {
+        try {
+            userService.exportExcel(response);
+        } catch (IOException e) {
+            log.error("导出Excel发生错误", e);
+        }
     }
 
 }
