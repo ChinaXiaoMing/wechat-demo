@@ -3,7 +3,9 @@ package com.example.wechat.controller;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.wechat.common.Result;
+import com.example.wechat.constant.Error;
 import com.example.wechat.entity.User;
+import com.example.wechat.exception.CustomException;
 import com.example.wechat.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -58,15 +60,15 @@ public class UserController {
 
     @GetMapping("/detail")
     @ApiOperation(value = "获取用户信息详情", notes = "获取用户信息详情")
-    public Result<User> findUserDetail(@RequestParam Long userId) {
-        User user = userService.getOne(Wrappers.<User>lambdaQuery().eq(User::getUserId, userId));
+    public Result<User> findUserDetail(@RequestParam Long id) {
+        User user = userService.getOne(Wrappers.<User>lambdaQuery().eq(User::getId, id));
         return Result.success(user);
     }
 
     @PostMapping("/delete")
     @ApiOperation(value = "删除用户信息", notes = "删除用户信息")
-    public Result<Boolean> deleteUser(@RequestParam Long userId) {
-        return Result.success(userService.removeById(userId));
+    public Result<Boolean> deleteUser(@RequestParam Long id) {
+        return Result.success(userService.removeById(id));
     }
 
     @PostMapping("/export")
@@ -76,6 +78,7 @@ public class UserController {
             userService.exportExcel(response);
         } catch (IOException e) {
             log.error("导出Excel发生错误", e);
+            throw new CustomException(Error.ERROR_EXPORT.getCode(), Error.ERROR_EXPORT.getMassage());
         }
     }
 

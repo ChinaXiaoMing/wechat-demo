@@ -5,7 +5,9 @@ import cn.hutool.poi.excel.ExcelUtil;
 import cn.hutool.poi.excel.ExcelWriter;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.example.wechat.constant.Error;
 import com.example.wechat.entity.User;
+import com.example.wechat.exception.CustomException;
 import com.example.wechat.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -30,7 +32,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     public void exportExcel(HttpServletResponse response) throws IOException {
         List<User> userList = baseMapper.selectList(Wrappers.emptyWrapper());
         if (CollUtil.isEmpty(userList)) {
-            return;
+            throw new CustomException(Error.ERROR_EXPORT_EMPTY.getCode(), Error.ERROR_EXPORT_EMPTY.getMassage());
         }
         List<Map<String, Object>> list = new ArrayList<>();
         for (User user : userList) {
